@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub User Fetch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #0056b3;
+        }
+
+        input {
+            padding: 10px;
+            width: 200px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #user-info {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            margin: 20px auto;
+            justify-content: center;
+            border-radius: 20px;
+            border: 2px solid #000;
+            max-width: 300px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #user-info img {
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+
+        #user-info a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        #user-info a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>GitHub User Fetch</h1>
+    <input type="text" id="username" placeholder="Enter GitHub Username">
+    <button onclick="perform()">Fetch</button>
+    <br><br>
+    <div id="user-info">
+        <img id="avatar" alt="User Avatar" width="200px" height="200px">
+        <h2 id="name">Name:</h2>
+        <p id="repo">Repositories:</p>
+        <p id="followers">Followers:</p>
+        <p id="following">Following:</p>
+        <a href="#" id="pro_link" target="_blank">View Profile</a>
+    </div>
+    <p class="error" id="error"></p>
+
+    <script>
+        function perform(username = document.getElementById('username').value) {
+            const url = `https://api.github.com/users/${username}`;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`User not found: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(userData => {
+                    console.log(userData);
+                    document.getElementById('name').textContent = `Name: ${userData.login}`;
+                    document.getElementById('repo').textContent = `Repositories: ${userData.public_repos}`;
+                    document.getElementById('followers').textContent = `Followers: ${userData.followers}`;
+                    document.getElementById('following').textContent = `Following: ${userData.following}`;
+                    document.getElementById('pro_link').href = userData.html_url;
+                    document.getElementById('pro_link').textContent = 'View Profile';
+                    document.getElementById('avatar').src = userData.avatar_url;
+                    document.getElementById('error').textContent = ''; // Clear error message
+                })
+                .catch(error => {
+                    console.error(error);
+                    document.getElementById('error').textContent = `Error: ${error.message}`;
+                });
+        }
+    </script>
+</body>
+
+</html>
